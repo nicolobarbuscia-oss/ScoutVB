@@ -54,7 +54,11 @@ document.head.appendChild(link);
   <div class="modal">
     <h2>🏐 <span>Partite</span> Salvate</h2>
     <div id="match-items" style="margin-bottom:15px;max-height:250px;overflow-y:auto"></div>
-    <div class="macts"><button class="bp" onclick="newMatch()">NUOVA PARTITA +</button></div>
+    <div class="macts" style="flex-direction:column;gap:8px">
+      <button class="bp" onclick="newMatch()">NUOVA PARTITA +</button>
+      <button class="hbtn" style="width:100%;padding:11px" onclick="document.getElementById('json-input').click()">CARICA JSON 📂</button>
+      <input type="file" id="json-input" style="display:none" accept=".json" onchange="importJSON(event)">
+    </div>
   </div>
 </div>
 
@@ -167,9 +171,9 @@ document.head.appendChild(link);
     <span id="inp-state" style="margin-left:auto;font-family:var(--fm);font-size:9px;color:var(--t3)">—</span>
    </div>
    <div class="card-body">
-    <div class="irow"><div class="ilbl">① Squadra</div><div class="t-sel"><div class="tbtn" id="tu" onclick="selT('us')">NOI</div><div class="tbtn" id="tt" onclick="selT('them')">AVVERSARIO</div></div></div>
-    <div class="irow"><div class="ilbl">② Giocatore</div><div class="pgrid" id="pg"></div></div>
-    <div class="irow"><div class="ilbl">③ Azione</div><div class="sgrid" id="sg">
+    <div class="irow" style="display:none"><div class="ilbl">① Squadra</div><div class="t-sel"><div class="tbtn" id="tu" onclick="selT('us')">NOI</div><div class="tbtn" id="tt" onclick="selT('them')">AVVERSARIO</div></div></div>
+    <div class="irow"><div class="ilbl">① Giocatore</div><div class="pgrid" id="pg"></div></div>
+    <div class="irow"><div class="ilbl">② Azione</div><div class="sgrid" id="sg">
      <div class="sbtn" data-sk="Battuta" onclick="selSk('Battuta')">BAT</div>
      <div class="sbtn" data-sk="Ricezione" onclick="selSk('Ricezione')">RIC</div>
      <div class="sbtn" data-sk="Attacco" onclick="selSk('Attacco')">ATT</div>
@@ -177,7 +181,7 @@ document.head.appendChild(link);
      <div class="sbtn" data-sk="Difesa" onclick="selSk('Difesa')">DIF</div>
      <div class="sbtn" data-sk="Alzata" onclick="selSk('Alzata')">ALZ</div>
     </div></div>
-    <div class="irow"><div class="ilbl">④ Valutazione</div><div class="rgrid">
+    <div class="irow"><div class="ilbl">③ Valutazione</div><div class="rgrid">
      <div class="rbtn" data-r="++" onclick="selR('++')">++</div>
      <div class="rbtn" data-r="+" onclick="selR('+')">+</div>
      <div class="rbtn" data-r="!" onclick="selR('!')">!</div>
@@ -237,6 +241,55 @@ document.head.appendChild(link);
 </div>
 
 <script type="module" src="js/app.js"></script>
+
+<script>
+/* ── SERVICE WORKER (inline) ── */
+const SW_CODE = `
+const CACHE = 'vspro-v2';
+const ASSETS = ['./', './css/style.css', './js/app.js', './js/state.js', './js/storage.js', './js/court.js', './js/stats.js'];
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', e => {
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+});
+`;
+if('serviceWorker' in navigator) {
+  const swBlob = new Blob([SW_CODE], {type:'application/javascript'});
+  const swURL = URL.createObjectURL(swBlob);
+  navigator.serviceWorker.register(swURL).catch(()=>{});
+}
+
+/* ── PWA INSTALL ── */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const b = document.getElementById('install-banner');
+  if(b) b.classList.add('show');
+});
+const ibtn = document.getElementById('ib-install-btn');
+if(ibtn) ibtn.addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').classList.remove('show');
+});
+const iclose = document.getElementById('ib-close');
+if(iclose) iclose.addEventListener('click', () => {
+  document.getElementById('install-banner').classList.remove('show');
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('show');
+  deferredPrompt = null;
+});
+</script>
 
 </body>
 </html>

@@ -17,6 +17,8 @@ window.selR = selR;
 window.confirmA = confirmA;
 window.undoLast = undoLast;
 window.expCSV = expCSV;
+window.expJSON = expJSON;
+window.importJSON = importJSON;
 window.doReset = doReset;
 window.closeBanner = closeBanner;
 window.delA = delA;
@@ -177,6 +179,7 @@ window.removeMatch = (mid) => {
 
 function startMatch() {
   resetState();
+  G.sT = 'us'; // Default to OUR team and keep it hidden
   G.mName = document.getElementById('mName').value.trim() || 'Partita ' + new Date().toLocaleDateString();
   G.un = document.getElementById('su').value.trim() || 'CASA';
   G.tn = document.getElementById('st').value.trim() || 'OSPITI';
@@ -199,6 +202,7 @@ function startMatch() {
   document.getElementById('htn').textContent = G.tn;
   document.getElementById('sm').style.display = 'none';
   saveMatch();
+  updPBtns();
   showSide(1);
 }
 
@@ -329,8 +333,8 @@ function confirmA() {
   saveMatch();
 }
 
-function ptUs() { if (G.srv !== 'us') { doRot(); G.srv = 'us'; } G.scu++; chkEnd(); updHdr(); saveMatch(); }
-function ptThem() { if (G.srv !== 'them') G.srv = 'them'; G.sct++; chkEnd(); updHdr(); saveMatch(); }
+function ptUs() { snap(null); if (G.srv !== 'us') { doRot(); G.srv = 'us'; } G.scu++; chkEnd(); updHdr(); saveMatch(); }
+function ptThem() { snap(null); if (G.srv !== 'them') G.srv = 'them'; G.sct++; chkEnd(); updHdr(); saveMatch(); }
 
 function chkEnd() {
   const u = G.scu, t = G.sct, tgt = G.cs === 5 ? 15 : 25;
@@ -353,7 +357,10 @@ function showBanner(u, t) {
     document.getElementById('bi').textContent = G.su >= 3 ? '🏆' : '💔';
     document.getElementById('bt').textContent = G.su >= 3 ? 'PARTITA VINTA!' : 'PARTITA PERSA';
     document.querySelector('.bb').textContent = 'FINE PARTITA';
-    document.querySelector('.bb').onclick = () => document.getElementById('banner').classList.remove('show');
+    document.querySelector('.bb').onclick = () => {
+      document.getElementById('banner').classList.remove('show');
+      if (confirm('Vuoi scaricare il file JSON della partita?')) expJSON();
+    };
   }
   document.getElementById('banner').classList.add('show');
 }
@@ -491,6 +498,39 @@ function expCSV() {
   const rows = G.acts.map(a => [a.id, a.set, a.scu, a.sct, a.rot, a.team, a.player, a.skill, a.rating].join(','));
   const csv = [h, ...rows].join('\n'); const b = new Blob([csv], { type: 'text/csv' });
   const u = URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = `volleyscout_${G.mid}.csv`; a.click(); URL.revokeObjectURL(u);
+}
+
+function expJSON() {
+  const data = JSON.stringify(G, null, 2);
+  const b = new Blob([data], { type: 'application/json' });
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u;
+  a.download = `volleyscout_${G.mid}.json`;
+  a.click();
+  URL.revokeObjectURL(u);
+}
+
+function importJSON(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const match = JSON.parse(ev.target.result);
+      if (!match.mid) throw new Error('File non valido');
+      const matches = JSON.parse(localStorage.getItem('vspro_matches') || '[]');
+      const idx = matches.findIndex(m => m.mid === match.mid);
+      if (idx >= 0) matches[idx] = match;
+      else matches.push(match);
+      localStorage.setItem('vspro_matches', JSON.stringify(matches));
+      showMatchList();
+      alert('Partita caricata con successo!');
+    } catch (err) {
+      alert('Errore nel caricamento del file JSON.');
+    }
+  };
+  reader.readAsText(file);
 }
 
 function doReset() { if (confirm('Resettare tutta la partita?')) { resetState(); location.reload(); } }
