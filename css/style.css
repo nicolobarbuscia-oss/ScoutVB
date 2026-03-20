@@ -219,3 +219,59 @@ html,body{height:100%;background:var(--navy);color:var(--t1);font-family:var(--f
 .bb:active{transform:scale(.96)}
 .serv-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--org);margin-right:4px;animation:serv-blink 1.2s ease-in-out infinite}
 @keyframes serv-blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+
+/* ── RESPONSIVE / DESKTOP ── */
+@media (min-width: 1024px) {
+  :root {
+    --hh: 64px;
+    --th: 0px; /* Hide tabs on desktop */
+  }
+  #tabs { display: none; }
+  #pages {
+    position: fixed; top: var(--hh); bottom: 0; left: 0; right: 0;
+    padding: 15px; background: var(--navy2);
+    overflow: hidden;
+  }
+  .page {
+    position: relative; display: block !important; inset: auto;
+    background: var(--navy); border-radius: 16px;
+    height: 100%; border: 1px solid var(--b1);
+    box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  }
+  /* Specific layout for pages on desktop */
+  #pages-container { grid-template-columns: 400px 1fr 400px; }
+  #p0 { grid-column: 1; } /* INPUT */
+  #p2 { grid-column: 2; } /* CAMPO */
+  .col3 { grid-column: 3; position: relative; height: 100%; }
+  #p1, #p3 { height: calc(50% - 7.5px); position: absolute; left: 0; right: 0; margin: 0; display: block !important; }
+  #p1 { top: 0; }
+  #p3 { bottom: 0; }
+
+  #pages-container {
+    display: grid; gap: 15px; height: 100%;
+    grid-template-columns: 400px 1fr 400px;
+  }
+
+  .logo { font-size: 26px; }
+  .score-widget { padding: 6px 14px; gap: 10px; }
+  .tscore { font-size: 34px; }
+  .hbtn { padding: 8px 14px; font-size: 14px; }
+
+  /* Make lists more compact on desktop */
+  .pi { padding: 5px 8px; margin-bottom: 2px; font-size: 10px; }
+  .ri { padding: 4px 8px; margin-bottom: 2px; }
+  .ms { margin-bottom: 3px; }
+  .plr { padding: 5px 8px; margin-bottom: 3px; }
+  .slbl { margin: 6px 0 5px; padding: 4px 1px; }
+  .dc { padding: 6px 4px; }
+  .dw { width: 44px; height: 44px; }
+  .dp { font-size: 12px; }
+  .en { font-size: 26px; }
+  .ebox { padding: 6px 10px; margin-bottom: 6px; }
+}
+
+@media (min-width: 1400px) {
+  #pages {
+    grid-template-columns: 450px 1fr 450px;
+  }
+}
