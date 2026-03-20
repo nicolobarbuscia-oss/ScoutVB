@@ -239,18 +239,29 @@ html,body{height:100%;background:var(--navy);color:var(--t1);font-family:var(--f
     box-shadow: 0 10px 30px rgba(0,0,0,.3);
   }
   /* Specific layout for pages on desktop */
-  #pages-container { grid-template-columns: 400px 1fr 400px; }
-  #p0 { grid-column: 1; } /* INPUT */
-  #p2 { grid-column: 2; } /* CAMPO */
-  .col3 { grid-column: 3; position: relative; height: 100%; }
-  #p1, #p3 { height: calc(50% - 7.5px); position: absolute; left: 0; right: 0; margin: 0; display: block !important; }
-  #p1 { top: 0; }
-  #p3 { bottom: 0; }
-
   #pages-container {
     display: grid; gap: 15px; height: 100%;
     grid-template-columns: 400px 1fr 400px;
+    position: relative;
   }
+  .page {
+    position: relative; display: block !important; inset: auto;
+    background: var(--navy); border-radius: 16px;
+    height: 100%; border: 1px solid var(--b1);
+    box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  }
+  #p0 { grid-column: 1; } /* INPUT */
+  #p2 { grid-column: 2; } /* CAMPO */
+
+  /* PBP and STATS stack in the 3rd column */
+  #p1, #p3 {
+    grid-column: 3;
+    height: calc(50% - 7.5px) !important;
+    position: absolute !important;
+    right: 0; width: 400px;
+  }
+  #p1 { top: 0; }
+  #p3 { bottom: 0; }
 
   .logo { font-size: 26px; }
   .score-widget { padding: 6px 14px; gap: 10px; }

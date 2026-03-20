@@ -165,6 +165,7 @@ document.head.appendChild(link);
 <!-- PAGES -->
 <div id="pages">
  <div id="pages-container">
+  <!-- PAGE 0: INPUT -->
  <div class="page active" id="p0">
   <div class="card">
    <div class="card-hdr">
@@ -204,7 +205,15 @@ document.head.appendChild(link);
   </div>
  </div>
 
+  <!-- PAGE 1: PBP -->
+  <div class="page" id="p1">
+   <div class="card">
+    <div class="card-hdr"><span class="card-title"><span class="dot">●</span>PLAY BY PLAY</span><span id="pcnt" style="margin-left:auto;font-family:var(--fm);font-size:9px;color:var(--t3)">0 azioni</span></div>
+    <div style="padding:8px" id="pbpl"><div class="empty">Nessuna azione registrata</div></div>
+   </div>
+  </div>
 
+  <!-- PAGE 2: CAMPO -->
  <div class="page" id="p2">
   <div class="card">
    <div class="court-ctrl">
@@ -219,23 +228,14 @@ document.head.appendChild(link);
   </div>
  </div>
 
- <div class="col3">
- <div class="page" id="p1">
-  <div class="card">
-   <div class="card-hdr"><span class="card-title"><span class="dot">●</span>PLAY BY PLAY</span><span id="pcnt" style="margin-left:auto;font-family:var(--fm);font-size:9px;color:var(--t3)">0 azioni</span></div>
-   <div style="padding:8px" id="pbpl"><div class="empty">Nessuna azione registrata</div></div>
-  </div>
+  <!-- PAGE 3: STATS -->
+  <div class="page" id="p3">
+   <div class="card">
+    <div class="card-hdr"><span class="card-title"><span class="dot" style="color:var(--grn)">●</span>STATISTICHE</span><div class="ttabs" style="margin-left:auto"><div class="ttab active" id="ss-s" onclick="setSS('set')">SET</div><div class="ttab" id="ss-a" onclick="setSS('all')">TOT</div></div></div>
+    <div style="padding:10px" id="sb"></div>
+   </div>
  </div>
-
- <div class="page" id="p3">
-  <div class="card">
-   <div class="card-hdr"><span class="card-title"><span class="dot" style="color:var(--grn)">●</span>STATISTICHE</span><div class="ttabs" style="margin-left:auto"><div class="ttab active" id="ss-s" onclick="setSS('set')">SET</div><div class="ttab" id="ss-a" onclick="setSS('all')">TOT</div></div></div>
-   <div style="padding:10px" id="sb"></div>
-  </div>
- </div>
- </div>
-
- </div>
+</div>
 </div>
 
 <!-- TABS -->
